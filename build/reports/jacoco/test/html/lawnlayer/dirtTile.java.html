@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>dirtTile.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">LawnMover</a> &gt; <a href="index.source.html" class="el_package">lawnlayer</a> &gt; <span class="el_source">dirtTile.java</span></div><h1>dirtTile.java</h1><pre class="source lang-java linenums">package lawnlayer;
+import processing.core.PImage;
+import processing.core.PApplet;
+import java.util.ArrayList;
+
+public class dirtTile extends tile {
+    public int x;
+    private int y;
+    private PImage sprite;
+
+    public dirtTile(int x, int y){
+<span class="nc" id="L12">        super(&quot;dirt&quot;,false,x,y);</span>
+        //this.sprite = sprite;
+<span class="nc" id="L14">        this.x = x;</span>
+<span class="nc" id="L15">        this.y = y;</span>
+<span class="nc" id="L16">        this.toured = false;</span>
+
+
+        
+
+
+<span class="nc" id="L22">    }</span>
+
+    public void draw(PApplet app){
+        //app.image(this.sprite, this.x, this.y);
+<span class="nc" id="L26">        app.fill(139,69,19);</span>
+<span class="nc" id="L27">        app.rect(this.x,this.y,20,20);</span>
+        
+        //app.stroke(139,69,19);
+
+
+
+
+<span class="nc" id="L34">    }    </span>
+ 
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

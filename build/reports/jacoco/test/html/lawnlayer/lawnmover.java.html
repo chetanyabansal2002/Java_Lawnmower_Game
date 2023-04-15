@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>lawnmover.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">LawnMover</a> &gt; <a href="index.source.html" class="el_package">lawnlayer</a> &gt; <span class="el_source">lawnmover.java</span></div><h1>lawnmover.java</h1><pre class="source lang-java linenums">package lawnlayer;
+import processing.core.PImage;
+import javafx.scene.input.KeyCode;
+import processing.core.PApplet;
+import java.util.ArrayList;
+
+import com.jogamp.nativewindow.awt.DirectDataBufferInt;
+
+import java.lang.Math;
+public class lawnmover {
+    public int x;
+    public int y;
+    public tile presentTile;
+    public tile NextTile;
+    public tile[][] Tiles;
+    public tile[][] DuplicateTiles;
+    public ArrayList&lt;tile&gt; Trail;
+    public boolean emenmy;
+    public ArrayList&lt;worm&gt; Enemies;
+    public boolean WrongArea;
+    public int Life;
+    public powerup AvaiablePowerup;
+    public boolean freeze;
+    public boolean boost;
+    public int UseTimer;
+    public int VacantTimer; 
+
+    private PImage sprite;
+    public int xDirection;
+    public int yDirection;
+    public boolean xChange;
+    public boolean yChange;
+    public boolean KeyUp;
+    public boolean KeyDown;
+    public boolean KeyLeft;
+    public boolean KeyRight;
+    public int TilesFilled;
+    public int  DirtTiles;
+    
+
+
+
+
+
+<span class="fc" id="L45">    public lawnmover(int x,int y, PImage sprite){</span>
+<span class="fc" id="L46">        this.x = x;</span>
+<span class="fc" id="L47">        this.y = y;</span>
+<span class="fc" id="L48">        this.sprite = sprite;</span>
+<span class="fc" id="L49">        this.xDirection = 0;</span>
+<span class="fc" id="L50">        this.yDirection = 0;</span>
+<span class="fc" id="L51">        this.xChange = true;</span>
+<span class="fc" id="L52">        this.yChange = true;</span>
+<span class="fc" id="L53">        this.KeyUp = false;</span>
+<span class="fc" id="L54">        this.KeyDown = false;</span>
+<span class="fc" id="L55">        this.KeyRight = false;</span>
+<span class="fc" id="L56">        this.KeyLeft = false;</span>
+<span class="fc" id="L57">        this.Tiles = new tile[64][32];</span>
+<span class="fc" id="L58">        this.Trail = new ArrayList&lt;tile&gt;();</span>
+<span class="fc" id="L59">        this.Enemies = new ArrayList&lt;worm&gt;();</span>
+<span class="fc" id="L60">        this.boost = false;</span>
+<span class="fc" id="L61">        this.freeze = false;</span>
+        //this.DirtTiles = 2048;
+       // greenTile G = new greenTile(this.x,this.y);
+        //this.Trail.add(G);   
+        //this.Tiles[1][1] = G; 
+                 
+
+
+       
+        
+        
+
+
+        
+
+<span class="fc" id="L76">    }</span>
+
+    public void tick(){
+        /*
+        if (this.NextTile != null){
+            System.out.println(this.NextTile.x);
+            System.out.println(this.NextTile.x);
+            System.out.println(&quot;///////////////////////////&quot;);
+            
+        }  
+        */  
+<span class="nc" id="L87">        this.keypress();</span>
+<span class="nc" id="L88">        this.move();</span>
+<span class="nc" id="L89">        this.EnemycollideTile();</span>
+<span class="nc" id="L90">        this.powerupCollide();</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (this.freeze == false){</span>
+<span class="nc" id="L92">           this.enemiesMove();</span>
+        }
+        else{
+<span class="nc" id="L95">            this.UseTimer = this.UseTimer +1;</span>
+        }   
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (this.AvaiablePowerup != null){</span>
+<span class="nc" id="L98">            this.VacantTimer = this.VacantTimer +0;</span>
+        }
+<span class="nc" id="L100">        this.UpdateCurrent();</span>
+<span class="nc" id="L101">        this.UpdateTrail();</span>
+<span class="nc" id="L102">        this.powerUpExpire();</span>
+        
+<span class="nc" id="L104">        this.ememiesLawnmoverCollide();</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        if( this.ememiesLawnmoverCollide() ==false){</span>
+<span class="nc bnc" id="L106" title="All 6 branches missed.">        if (this.x%20 == 0 &amp;&amp; this.y%20 == 0 &amp;&amp; this.Trail.size()&gt;0){</span>
+<span class="nc" id="L107">           this.FloodFill(this.x/20, this.y/20-4);</span>
+        }   
+        }
+        
+        
+<span class="nc" id="L112">    }</span>
+
+    
+    public void draw(PApplet app){
+        
+        //Handles graphics
+<span class="nc" id="L118">        app.image(this.sprite, this.x, this.y);</span>
+        
+        
+<span class="nc" id="L121">    }</span>
+    /*
+    public void updateTiles(tile[][] Tiles){
+        for (int i =0 ; i &lt;64;i++){
+            for(int j = 0;j&lt;32;j++){
+                this.Tiles[i][j] = Tiles[i][j];
+            }
+        }
+
+    }
+    */
+
+    public void keypress(){
+
+
+        
+
+<span class="nc bnc" id="L138" title="All 4 branches missed.">        if (this.KeyUp == true&amp;&amp; this.x%20 == 0){</span>
+<span class="nc" id="L139">            this.xDirection = 0;</span>
+<span class="nc" id="L140">            this.yDirection = -1;</span>
+<span class="nc" id="L141">            this.yChange = false; </span>
+<span class="nc" id="L142">            this.xChange = true;            </span>
+
+        }
+<span class="nc bnc" id="L145" title="All 4 branches missed.">        else if(this.KeyDown == true&amp;&amp; this.x%20 == 0){</span>
+<span class="nc" id="L146">            this.xDirection = 0;</span>
+<span class="nc" id="L147">            this.yDirection = 1;</span>
+<span class="nc" id="L148">            this.yChange = false; </span>
+<span class="nc" id="L149">            this.xChange = true;            </span>
+
+        }
+<span class="nc bnc" id="L152" title="All 4 branches missed.">        else if(this.KeyLeft == true &amp;&amp; this.y%20 == 0){</span>
+<span class="nc" id="L153">            this.xDirection = -1;</span>
+<span class="nc" id="L154">            this.yDirection = 0;    </span>
+<span class="nc" id="L155">            this.yChange = true;</span>
+<span class="nc" id="L156">            this.xChange = false;             </span>
+
+        }
+<span class="nc bnc" id="L159" title="All 4 branches missed.">        else if(this.KeyRight == true&amp;&amp; this.y%20 == 0){</span>
+<span class="nc" id="L160">            this.xDirection = 1;</span>
+<span class="nc" id="L161">            this.yDirection = 0;  </span>
+<span class="nc" id="L162">            this.yChange = true; </span>
+<span class="nc" id="L163">            this.xChange = false;            </span>
+
+        }
+
+<span class="nc" id="L167">    }</span>
+    /*
+    public void UpdateCurrent(){
+        double xTile = this.x/20;
+        double yTile = (this.y/20)-4;
+        int tempCurrX = (int) (Math.floor(xTile));
+        
+        int tempCurrY = (int)(Math.floor(yTile));
+        System.out.println(yTile);
+        int tempNextX = (int)(Math.ceil(xTile));
+        int tempNextY = (int)(Math.ceil(yTile));
+        if(tempCurrX == tempNextX &amp;&amp; tempCurrY == tempNextY){
+            this.presentTile = this.Tiles[tempCurrX][tempCurrY];
+            this.NextTile = null;
+        }
+        else {
+            this.presentTile = this.Tiles[tempCurrX][tempCurrY];
+            this.NextTile = this.Tiles[tempNextX][tempNextY];
+        }
+        
+        
+         
+
+    }
+    */
+    public void UpdateCurrent(){
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        if (this.NextTile == null){</span>
+<span class="nc" id="L194">            int i = this.presentTile.x/20;</span>
+<span class="nc" id="L195">            int j = this.presentTile.y/20-4;</span>
+
+<span class="nc bnc" id="L197" title="All 2 branches missed.">            if (this.xDirection == -1){</span>
+<span class="nc" id="L198">                this.NextTile = this.Tiles[i-1][j];</span>
+                //System.out.println(this.NextTile.x);
+                //System.out.println(this.NextTile.y);
+                //System.out.println(&quot;/////&quot;);
+                
+            }
+
+<span class="nc bnc" id="L205" title="All 2 branches missed.">            else if (this.xDirection == 1){</span>
+<span class="nc" id="L206">                this.NextTile = this.Tiles[i+1][j];</span>
+                //System.out.println(this.NextTile.x);
+                //System.out.println(this.NextTile.y);
+                //System.out.println(&quot;/////&quot;);
+            } 
+<span class="nc bnc" id="L211" title="All 2 branches missed.">            else if (this.yDirection == -1){</span>
+<span class="nc" id="L212">                this.NextTile = this.Tiles[i][j-1];</span>
+                //System.out.println(this.NextTile.x);
+                //System.out.println(this.NextTile.y);
+                //System.out.println(&quot;/////&quot;);                
+            }
+<span class="nc bnc" id="L217" title="All 2 branches missed.">            else if (this.yDirection == 1){</span>
+<span class="nc" id="L218">                this.NextTile = this.Tiles[i][j+1];</span>
+                //System.out.println(this.NextTile.x);
+                //System.out.println(this.NextTile.y);                
+                //System.out.println(&quot;/////&quot;);
+            }                            
+            
+            
+<span class="nc" id="L225">        }</span>
+<span class="nc bnc" id="L226" title="All 4 branches missed.">        else if(this.x%20==0 &amp;&amp; this.y%20==0){</span>
+<span class="nc" id="L227">            this.presentTile = this.NextTile;</span>
+<span class="nc" id="L228">            this.NextTile = null;</span>
+
+        }
+<span class="nc" id="L231">    }</span>
+    
+
+    public void UpdateTrail(){
+<span class="nc" id="L235">         boolean Stationery = false;</span>
+<span class="nc bnc" id="L236" title="All 4 branches missed.">         if (this.xDirection == 0 || this.yDirection == 0){</span>
+<span class="nc" id="L237">             Stationery = true;</span>
+         }
+<span class="nc bnc" id="L239" title="All 4 branches missed.">         if (this.x%20 == 0 &amp;&amp; this.y%20 == 0 ){</span>
+<span class="nc bnc" id="L240" title="All 2 branches missed.">             if (this.Tiles[x/20][y/20-4].type == &quot;green&quot;){</span>
+                //System.out.println(&quot;Life lost&quot;+this.x/20+&quot; &quot;+(this.y/20-4));
+<span class="nc bnc" id="L242" title="All 2 branches missed.">                 for (tile t:this.Trail){</span>
+<span class="nc" id="L243">                     dirtTile T = new dirtTile(t.x, t.y);</span>
+<span class="nc" id="L244">                     this.Tiles[t.x/20][t.y/20-4] = T;</span>
+                     
+                     
+<span class="nc" id="L247">                 }</span>
+<span class="nc" id="L248">                 this.Trail.clear();</span>
+<span class="nc" id="L249">                 this.Life = this.Life -1;</span>
+<span class="nc" id="L250">                 this.x = 20;</span>
+<span class="nc" id="L251">                 this.y = 100;</span>
+<span class="nc" id="L252">                 this.xChange = true;</span>
+<span class="nc" id="L253">                 this.yChange = true;</span>
+<span class="nc" id="L254">                 this.xDirection = 0;</span>
+<span class="nc" id="L255">                 this.yDirection = 0;</span>
+<span class="nc" id="L256">                 this.presentTile = this.Tiles[1][1];</span>
+<span class="nc" id="L257">                 this.NextTile = null;</span>
+<span class="nc" id="L258">                  return;</span>
+
+
+             }
+<span class="nc bnc" id="L262" title="All 2 branches missed.">             if (this.Tiles[x/20][y/20-4].type != &quot;dirt&quot;){</span>
+<span class="nc" id="L263">                 return;</span>
+             }
+            
+
+<span class="nc" id="L267">           int I = this.x/20;</span>
+<span class="nc" id="L268">           int J = this.y/20-4;</span>
+           
+<span class="nc" id="L270">           greenTile G = new greenTile(this.x,this.y);</span>
+           
+        
+<span class="nc bnc" id="L273" title="All 4 branches missed.">           if (this.xDirection != 0 || this.yDirection != 0){</span>
+<span class="nc" id="L274">            this.Trail.add(G);   </span>
+<span class="nc" id="L275">            this.Tiles[I][J] = G; </span>
+            //this.DirtTiles = this.DirtTiles -1; 
+            
+           //System.out.println(this.Trail.size());
+          }
+          
+
+
+
+        }  
+
+
+
+<span class="nc" id="L288">    }</span>
+
+    public void move(){
+<span class="nc bnc" id="L291" title="All 2 branches missed.">        if (this.NextTile != null){</span>
+<span class="nc bnc" id="L292" title="All 2 branches missed.">            if (this.NextTile.type == &quot;cement&quot;){</span>
+<span class="nc" id="L293">                this.yDirection = 0;</span>
+<span class="nc" id="L294">                this.xDirection = 0;</span>
+<span class="nc" id="L295">                this.NextTile = null;</span>
+<span class="nc" id="L296">                this.x = this.presentTile.x;</span>
+<span class="nc" id="L297">                this.y = this.presentTile.y;</span>
+<span class="nc" id="L298">                this.KeyUp = false;</span>
+<span class="nc" id="L299">                this.KeyLeft = false;</span>
+<span class="nc" id="L300">                this.KeyDown = false;</span>
+<span class="nc" id="L301">                this.KeyRight = false;</span>
+
+            }
+
+        }
+<span class="nc bnc" id="L306" title="All 2 branches missed.">        if (this.boost == true){</span>
+<span class="nc" id="L307">            System.out.println(&quot;boost&quot;);</span>
+<span class="nc bnc" id="L308" title="All 2 branches missed.">            if (this.x%4 == 2){</span>
+<span class="nc" id="L309">                this.x = this.x -2*this.xDirection;</span>
+            }
+<span class="nc bnc" id="L311" title="All 2 branches missed.">            if (this.y%4 == 2){</span>
+<span class="nc" id="L312">                this.y = this.y -2*this.yDirection;</span>
+            }
+<span class="nc" id="L314">            this.x = this.x + 4*this.xDirection;</span>
+<span class="nc" id="L315">            this.y = this.y + this.yDirection*4;</span>
+<span class="nc" id="L316">            this.UseTimer = this.UseTimer +1;</span>
+<span class="nc" id="L317">            return;</span>
+        }
+<span class="nc" id="L319">        this.x = this.x + this.xDirection*2;</span>
+<span class="nc" id="L320">        this.y = this.y + this.yDirection*2;</span>
+
+<span class="nc" id="L322">    }</span>
+
+    public void FloodFill(int x,int y){
+<span class="nc" id="L325">        boolean XPlus = false;</span>
+<span class="nc" id="L326">        boolean YMinus = false;</span>
+<span class="nc" id="L327">        boolean XMinus = false;</span>
+<span class="nc" id="L328">        boolean YPlus = false;</span>
+<span class="nc" id="L329">        this.TilesFilled = 0;</span>
+<span class="nc" id="L330">        this.WrongArea = false;</span>
+        //Create a duplicate cell list
+<span class="nc" id="L332">        this.DuplicateTiles = new tile[64][32];</span>
+<span class="nc bnc" id="L333" title="All 2 branches missed.">        for (int i = 0;i&lt;64;i++){</span>
+<span class="nc bnc" id="L334" title="All 2 branches missed.">            for(int j=0;j&lt;32;j++){</span>
+<span class="nc" id="L335">                this.DuplicateTiles[i][j]= this.Tiles[i][j];</span>
+            }
+        }
+<span class="nc bnc" id="L338" title="All 8 branches missed.">        if(this.DuplicateTiles[x+1][y].type != &quot;dirt&quot;&amp;&amp;this.DuplicateTiles[x-1][y].type != &quot;dirt&quot;&amp;&amp;this.DuplicateTiles[x][y+1].type != &quot;dirt&quot;&amp;&amp;this.DuplicateTiles[x][y-1].type != &quot;dirt&quot;){</span>
+<span class="nc" id="L339">            return;</span>
+        }
+<span class="nc bnc" id="L341" title="All 8 branches missed.">        else if (this.DuplicateTiles[x+1][y].safe == false &amp;&amp;this.DuplicateTiles[x-1][y].safe == false &amp;&amp; this.DuplicateTiles[x][y+1].safe == false &amp;&amp;this.DuplicateTiles[x][y-1].safe == false){</span>
+<span class="nc" id="L342">            return;</span>
+            
+        }
+        else{
+<span class="nc bnc" id="L346" title="All 2 branches missed.">            if (this.DuplicateTiles[x+1][y].type == &quot;dirt&quot;){</span>
+<span class="nc" id="L347">                this.HelperFunction(x+1, y);</span>
+<span class="nc" id="L348">                XPlus = true;</span>
+            }
+<span class="nc bnc" id="L350" title="All 2 branches missed.">            else if (this.DuplicateTiles[x-1][y].type == &quot;dirt&quot;){</span>
+<span class="nc" id="L351">                this.HelperFunction(x-1, y);</span>
+<span class="nc" id="L352">                XMinus = true;</span>
+            }
+<span class="nc bnc" id="L354" title="All 2 branches missed.">            else if (this.DuplicateTiles[x][y+1].type == &quot;dirt&quot;){</span>
+<span class="nc" id="L355">                this.HelperFunction(x, y+1);</span>
+<span class="nc" id="L356">                YPlus = true;</span>
+            }
+<span class="nc bnc" id="L358" title="All 2 branches missed.">            else if (this.DuplicateTiles[x][y-1].type == &quot;dirt&quot;){</span>
+<span class="nc" id="L359">                this.HelperFunction(x, y-1);</span>
+<span class="nc" id="L360">                YMinus = true;</span>
+            }                        
+        }
+        //System.out.println(this.TilesFilled);
+        //System.out.println(&quot;Trail Size&quot;+this.Trail.size());
+        //System.out.println(this.DirtTiles);
+<span class="nc" id="L366">        this.DirtTiles = this.getDirtTiles();</span>
+        //System.out.println(this.DirtTiles+&quot;Dirt tiles&quot;);
+
+<span class="nc bnc" id="L369" title="All 2 branches missed.">        if (this.TilesFilled &gt;= this.DirtTiles ){</span>
+<span class="nc" id="L370">            System.out.println(this.TilesFilled);</span>
+<span class="nc" id="L371">            System.out.println(this.DirtTiles);</span>
+<span class="nc" id="L372">            System.out.println(&quot;////////////////&quot;);</span>
+<span class="nc" id="L373">            return;</span>
+            
+        }
+<span class="nc bnc" id="L376" title="All 2 branches missed.">        if(this.WrongArea == true){</span>
+<span class="nc" id="L377">            this.TilesFilled = 0;</span>
+            //System.out.println(&quot;air con&quot;);
+<span class="nc bnc" id="L379" title="All 2 branches missed.">            for (int i = 0;i&lt;64;i++){</span>
+<span class="nc bnc" id="L380" title="All 2 branches missed.">                for(int j=0;j&lt;32;j++){</span>
+<span class="nc" id="L381">                    this.DuplicateTiles[i][j]= this.Tiles[i][j];    </span>
+                }
+            }    
+<span class="nc" id="L384">            this.WrongArea =false;</span>
+<span class="nc bnc" id="L385" title="All 4 branches missed.">            if (XPlus == true &amp;&amp; this.Tiles[this.x/20-1][this.y/20-4].type ==&quot;dirt&quot;){</span>
+<span class="nc" id="L386">                this.HelperFunction(this.x/20 -1, this.y/20-4);</span>
+<span class="nc bnc" id="L387" title="All 2 branches missed.">                if (this.WrongArea == true){</span>
+                    //System.out.println(this.TilesFilled);
+                }
+                else {
+                    /*
+                    for (int i = 0;i&lt;64;i++){
+                        for(int j = 0;j&lt;32;j++){
+                            if (this.DuplicateTiles[i][j].type == &quot;dirt&quot; &amp;&amp; this.DuplicateTiles[i][j].toured == true){
+                                grassTile G = new grassTile(20*i, (j+4)*20);
+                                this.DuplicateTiles[i][j]= G;
+                            }    
+                        }
+                    }
+                    */
+<span class="nc bnc" id="L401" title="All 2 branches missed.">                    for (int i = 0;i&lt;64;i++){</span>
+<span class="nc bnc" id="L402" title="All 2 branches missed.">                        for(int j = 0;j&lt;32;j++){</span>
+<span class="nc" id="L403">                            this.Tiles[i][j] = this.DuplicateTiles[i][j];</span>
+                        }
+                    }                    
+                }
+            }            
+<span class="nc bnc" id="L408" title="All 4 branches missed.">            else if (YPlus == true &amp;&amp; this.Tiles[this.x/20][this.y/20-5].type ==&quot;dirt&quot;){</span>
+<span class="nc" id="L409">                this.HelperFunction(this.x/20, this.y/20-5);</span>
+<span class="nc bnc" id="L410" title="All 2 branches missed.">                if (this.WrongArea == true){</span>
+                    ;
+                }
+                
+                else {
+                    /*
+                    for (int i = 0;i&lt;64;i++){
+                        for(int j = 0;j&lt;32;j++){
+                            if (this.DuplicateTiles[i][j].type == &quot;dirt&quot; &amp;&amp; this.DuplicateTiles[i][j].toured == true){
+                                grassTile G = new grassTile(20*i, (j+4)*20);
+                                this.DuplicateTiles[i][j]= G;
+                            }    
+                        }
+                    }
+                    */
+<span class="nc bnc" id="L425" title="All 2 branches missed.">                    for (int i = 0;i&lt;64;i++){</span>
+<span class="nc bnc" id="L426" title="All 2 branches missed.">                        for(int j = 0;j&lt;32;j++){</span>
+<span class="nc" id="L427">                            this.Tiles[i][j] = this.DuplicateTiles[i][j];</span>
+                        }
+                    }                    
+                }                
+            }
+        }
+        else{
+            /*
+            for (int i = 0;i&lt;64;i++){
+                for (int j = 0;i&lt;64;i++){
+                    if (this.DuplicateTiles[i][j].type == &quot;dirt&quot; &amp;&amp; this.DuplicateTiles[i][j].toured == true){
+                      grassTile G = new grassTile(20*i, (j+4)*20);
+                      this.DuplicateTiles[i][j]= G;
+                      System.out.println(&quot;Grape juice&quot;);
+
+                    }
+
+                }
+            }
+            */
+            
+<span class="nc bnc" id="L448" title="All 2 branches missed.">            for(int i = 0;i&lt;64;i++){</span>
+<span class="nc bnc" id="L449" title="All 2 branches missed.">                for(int j = 0;j&lt;32;j++){</span>
+<span class="nc" id="L450">                    this.Tiles[i][j] = this.DuplicateTiles[i][j];</span>
+                }
+            }
+            
+
+        }
+<span class="nc bnc" id="L456" title="All 2 branches missed.">        for (tile t: this.Trail){</span>
+<span class="nc" id="L457">            int A = t.x/20;</span>
+<span class="nc" id="L458">            int B = t.y/20 -4;</span>
+<span class="nc" id="L459">            grassTile G = new grassTile(t.x,t.y);</span>
+<span class="nc" id="L460">            this.Tiles[A][B]= G; </span>
+            
+<span class="nc" id="L462">        }</span>
+<span class="nc" id="L463">        this.Trail.clear();</span>
+
+<span class="nc" id="L465">    }</span>
+
+    public void HelperFunction(int x,int y){
+<span class="nc bnc" id="L468" title="All 2 branches missed.">        if(this.DuplicateTiles[x][y].type != &quot;dirt&quot; ){</span>
+<span class="nc" id="L469">            return;      </span>
+        } 
+        else{
+<span class="nc" id="L472">            this.TilesFilled = this.TilesFilled+1;</span>
+            //grassTile G = new grassTile(20*x, (y+4)*20);
+            //this.DuplicateTiles[x][y]= G;
+             
+            /*
+            if ( this.TilesFilled&gt;1000){
+                this.WrongArea = true;
+            }     
+            */
+<span class="nc bnc" id="L481" title="All 2 branches missed.">            for (worm e:this.Enemies){</span>
+<span class="nc" id="L482">                int I = (int) Math.round(e.x/20);</span>
+<span class="nc" id="L483">                int J = (int) (Math.round(e.y/20)-4);</span>
+<span class="nc bnc" id="L484" title="All 4 branches missed.">                if(I == x &amp;&amp; J == y){</span>
+<span class="nc" id="L485">                   this.WrongArea = true;</span>
+                   //System.out.println(&quot;wrong Area&quot;);
+                   
+
+                }
+<span class="nc" id="L490">            }</span>
+            
+            //this.DuplicateTiles[x][y].toured = true;
+<span class="nc" id="L493">            grassTile G = new grassTile(20*x, (y+4)*20);</span>
+           
+<span class="nc" id="L495">            this.DuplicateTiles[x][y]= G;</span>
+<span class="nc" id="L496">            this.HelperFunction(x+1,y);</span>
+<span class="nc" id="L497">            this.HelperFunction(x-1,y);</span>
+<span class="nc" id="L498">            this.HelperFunction(x,y+1);</span>
+<span class="nc" id="L499">            this.HelperFunction(x,y-1);</span>
+            
+        }        
+
+
+
+<span class="nc" id="L505">    }</span>
+
+    public void EnemycollideTile(){
+    
+<span class="nc bnc" id="L509" title="All 2 branches missed.">      for(worm e: this.Enemies){  </span>
+        
+
+        
+<span class="nc bnc" id="L513" title="All 4 branches missed.">        if (e.x%20 == 0 &amp;&amp; e.y%20 == 0){</span>
+        //Check if if collides with top
+<span class="nc" id="L515">        int x = e.x/20;</span>
+<span class="nc" id="L516">        int y = e.y/20 - 4;</span>
+<span class="nc bnc" id="L517" title="All 4 branches missed.">           if (e.xDirection ==1 &amp;&amp; this.Tiles[x+1][y].safe == true  ){</span>
+<span class="nc" id="L518">           e.xDirection = -1;</span>
+           
+           }
+  
+  
+        //Check if it collides with bottom
+<span class="nc bnc" id="L524" title="All 4 branches missed.">          if (e.xDirection ==-1 &amp;&amp; this.Tiles[x-1][y].safe == true){</span>
+            //System.out.println(&quot;x:&quot;+x+&quot;y&quot;+y);
+<span class="nc" id="L526">          e.xDirection = 1;</span>
+          
+          }       
+  
+        //Check if it collides with left 
+<span class="nc bnc" id="L531" title="All 4 branches missed.">          if (e.yDirection ==-1 &amp;&amp; this.Tiles[x][y-1].safe == true){</span>
+           // System.out.println(&quot;x:&quot;+x+&quot;y&quot;+y);
+<span class="nc" id="L533">          e.yDirection = 1;</span>
+          
+          }      
+        // Check if collides with right
+<span class="nc bnc" id="L537" title="All 4 branches missed.">          if (e.yDirection ==1 &amp;&amp; this.Tiles[x][y+1].safe == true){</span>
+          //System.out.println(&quot;x:&quot;+x+&quot;y&quot;+y);    
+<span class="nc" id="L539">          e.yDirection = -1;</span>
+          
+          }      
+        
+      
+        }
+<span class="nc" id="L545">     } </span>
+  
+<span class="nc" id="L547">    }</span>
+    
+    public void enemiesMove(){
+<span class="nc bnc" id="L550" title="All 2 branches missed.">        for(worm e: this.Enemies){</span>
+<span class="nc" id="L551">            e.x = e.x + 2*e.xDirection;</span>
+<span class="nc" id="L552">            e.y = e.y + 2*e.yDirection;</span>
+<span class="nc" id="L553">        }</span>
+<span class="nc" id="L554">    }</span>
+
+    public boolean ememiesLawnmoverCollide(){
+<span class="nc" id="L557">        boolean check = false;</span>
+<span class="nc" id="L558">        int coll = 0;</span>
+<span class="nc bnc" id="L559" title="All 2 branches missed.">        for (worm e: this.Enemies){</span>
+<span class="nc bnc" id="L560" title="All 2 branches missed.">            for(tile t: this.Trail){</span>
+<span class="nc" id="L561">                check = this.CheckCollison(e.x, e.y, t.x, t.y);</span>
+<span class="nc bnc" id="L562" title="All 2 branches missed.">               if (check == true){</span>
+<span class="nc" id="L563">                   coll = coll +1;</span>
+                   //System.out.println(&quot;e_x: &quot;+e.x+&quot; e_y: &quot;+e.y+&quot; t.x: &quot;+t.x+&quot; t.y: &quot;+t.y);
+               }
+               
+
+                         
+
+
+
+<span class="nc" id="L572">            }</span>
+<span class="nc" id="L573">        }</span>
+<span class="nc bnc" id="L574" title="All 2 branches missed.">        if (coll&gt; 0){</span>
+<span class="nc bnc" id="L575" title="All 2 branches missed.">            for (tile t:this.Trail){</span>
+<span class="nc" id="L576">                dirtTile T = new dirtTile(t.x, t.y);</span>
+<span class="nc" id="L577">                this.Tiles[t.x/20][t.y/20-4] = T;</span>
+
+<span class="nc" id="L579">            }</span>
+<span class="nc" id="L580">            this.Trail.clear();</span>
+<span class="nc" id="L581">            this.x = 20;</span>
+<span class="nc" id="L582">            this.y = 100;</span>
+<span class="nc" id="L583">            this.xChange = true;</span>
+<span class="nc" id="L584">            this.yChange = true;</span>
+<span class="nc" id="L585">            this.xDirection = 0;</span>
+<span class="nc" id="L586">            this.yDirection = 0;</span>
+<span class="nc" id="L587">            this.presentTile = this.Tiles[1][1];</span>
+<span class="nc" id="L588">            this.NextTile = null;</span>
+<span class="nc" id="L589">            this.Life = this.Life -1;</span>
+    
+<span class="nc" id="L591">            return true;</span>
+        }
+<span class="nc" id="L593">        return false;</span>
+
+    }
+
+    public int getDirtTiles(){
+<span class="nc" id="L598">        this.DirtTiles = 0;</span>
+<span class="nc bnc" id="L599" title="All 2 branches missed.">        for(int i =0;i&lt;64;i++){</span>
+<span class="nc bnc" id="L600" title="All 2 branches missed.">            for(int j = 0;j&lt;32;j++){</span>
+                
+<span class="nc bnc" id="L602" title="All 2 branches missed.">                if (this.Tiles[i][j].type== &quot;dirt&quot;){</span>
+<span class="nc" id="L603">                    this.DirtTiles = this.DirtTiles +1;</span>
+
+                }
+            }
+        }
+<span class="nc" id="L608">        return this.DirtTiles;</span>
+
+    }
+
+    public boolean CheckCollison(int x1,int y1,int x2,int y2){
+<span class="nc" id="L613">        int obj2left = x2;</span>
+<span class="nc" id="L614">        int obj2right = x2+20;</span>
+<span class="nc" id="L615">        int obj2up = y2;</span>
+<span class="nc" id="L616">        int obj2down = y2+20;</span>
+<span class="nc" id="L617">        int obj1right = x1+20;</span>
+<span class="nc" id="L618">        int obj1down = y1+20;</span>
+<span class="nc bnc" id="L619" title="All 8 branches missed.">        if(obj1right&gt;obj2left &amp;&amp; x1&lt;obj2right &amp;&amp; obj1down&gt;obj2up &amp;&amp; y1&lt;obj2down){</span>
+<span class="nc" id="L620">            return true;</span>
+        }
+
+
+
+
+<span class="nc" id="L626">        return false;</span>
+
+
+    }
+
+    public boolean powerupCollide(){
+<span class="nc bnc" id="L632" title="All 2 branches missed.">        if (this.AvaiablePowerup ==null){</span>
+<span class="nc" id="L633">            return false;</span>
+        }
+
+<span class="nc bnc" id="L636" title="All 2 branches missed.">        if (this.CheckCollison(this.x, this.y, this.AvaiablePowerup.x, this.AvaiablePowerup.y)==true){</span>
+<span class="nc bnc" id="L637" title="All 2 branches missed.">            if (this.AvaiablePowerup.type==&quot;boost&quot;){</span>
+<span class="nc" id="L638">                this.boost = true;</span>
+<span class="nc" id="L639">                this.UseTimer = 0;</span>
+<span class="nc" id="L640">                this.AvaiablePowerup = null;</span>
+<span class="nc" id="L641">                return true;</span>
+            
+
+            }
+<span class="nc bnc" id="L645" title="All 2 branches missed.">            if (this.AvaiablePowerup.type==&quot;freeze&quot;){</span>
+<span class="nc" id="L646">                this.freeze = true;</span>
+<span class="nc" id="L647">                this.UseTimer = 0;</span>
+<span class="nc" id="L648">                this.AvaiablePowerup = null;</span>
+<span class="nc" id="L649">                return true;</span>
+
+            }
+<span class="nc bnc" id="L652" title="All 2 branches missed.">            if (this.AvaiablePowerup.type==&quot;heart&quot;){</span>
+<span class="nc" id="L653">                this.Life = this.Life +1;</span>
+    
+<span class="nc" id="L655">                this.AvaiablePowerup = null;</span>
+<span class="nc" id="L656">                return true;</span>
+                
+            }
+        }
+<span class="nc" id="L660">        return false;</span>
+    }
+
+    public void powerUpExpire(){
+<span class="nc bnc" id="L664" title="All 4 branches missed.">       if (this.VacantTimer&gt;900 || this.UseTimer&gt;300){</span>
+<span class="nc" id="L665">            this.AvaiablePowerup = null;</span>
+<span class="nc" id="L666">            this.freeze = false;</span>
+<span class="nc" id="L667">            this.boost = false;</span>
+
+        }
+<span class="nc" id="L670">    }</span>
+
+  
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

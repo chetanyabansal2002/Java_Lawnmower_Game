@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>App.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">LawnMover</a> &gt; <a href="index.source.html" class="el_package">lawnlayer</a> &gt; <span class="el_source">App.java</span></div><h1>App.java</h1><pre class="source lang-java linenums">package lawnlayer;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.io.*;
+import java.util.Scanner;
+
+import org.checkerframework.checker.units.qual.A;
+import processing.core.PApplet;
+import processing.core.PImage;
+import processing.data.JSONObject;
+import processing.data.JSONArray;
+//import processing.core.PFont;
+import processing.event.KeyEvent;
+import java.lang.Math;
+
+public class App extends PApplet {
+
+    public static final int WIDTH = 1280;
+    public static final int HEIGHT = 720;
+    public static final int SPRITESIZE = 20;
+    public static final int TOPBAR = 80;
+    public JSONArray levels;
+    public JSONObject jsonObject;
+    public int totalEnem;
+    public double goal;
+    public int tilesNeed;
+
+
+
+    public static final int FPS = 60;
+<span class="nc" id="L32">    public int currentLevel = 0;</span>
+    public String configPath;
+    public int Counter;
+	
+	public PImage grass;
+    public PImage concrete;
+    public PImage worm;
+    public PImage heart;
+    public PImage boost;
+    public PImage freeze;
+    public PImage beetle;
+    private lawnmover Lawnmover;
+    public int lives;
+   // public tile[][] Tiles;
+
+
+
+
+<span class="nc" id="L50">    public App() {</span>
+<span class="nc" id="L51">        this.configPath = &quot;config.json&quot;;</span>
+
+
+
+        
+        
+             
+<span class="nc" id="L58">    }</span>
+
+    /**
+     * Initialise the setting of the window size.
+    */
+    public void settings() {
+<span class="nc" id="L64">        size(WIDTH, HEIGHT);</span>
+        
+        
+<span class="nc" id="L67">    }</span>
+
+    /**
+     * Load all resources such as images. Initialise the elements such as the player, enemies and map elements.
+    */
+    public void setup() {
+<span class="nc" id="L73">        frameRate(FPS);</span>
+<span class="nc" id="L74">        this.Lawnmover = new lawnmover(20, 100, loadImage(this.getClass().getResource(&quot;ball.png&quot;).getPath()));</span>
+<span class="nc" id="L75">        this.jsonObject = loadJSONObject(this.configPath);</span>
+<span class="nc" id="L76">        this.levels = (JSONArray)jsonObject.get(&quot;levels&quot;);</span>
+<span class="nc" id="L77">        this.Lawnmover.Life = (int)(jsonObject.get(&quot;lives&quot;));</span>
+
+        // Load images during setup
+<span class="nc" id="L80">		this.grass = loadImage(this.getClass().getResource(&quot;grass.png&quot;).getPath());</span>
+<span class="nc" id="L81">        this.concrete = loadImage(this.getClass().getResource(&quot;concrete_tile.png&quot;).getPath());</span>
+<span class="nc" id="L82">        this.worm = loadImage(this.getClass().getResource(&quot;worm.png&quot;).getPath());</span>
+<span class="nc" id="L83">        this.beetle = loadImage(this.getClass().getResource(&quot;beetle.png&quot;).getPath());</span>
+<span class="nc" id="L84">        this.freeze = loadImage(this.getClass().getResource(&quot;freeze.png&quot;).getPath());</span>
+<span class="nc" id="L85">        this.boost = loadImage(this.getClass().getResource(&quot;boost.png&quot;).getPath());</span>
+<span class="nc" id="L86">        this.heart = loadImage(this.getClass().getResource(&quot;heart.png&quot;).getPath());</span>
+        
+
+<span class="nc" id="L89">        this.LevelChange();</span>
+<span class="nc" id="L90">        this.Counter = 0;</span>
+        /*
+        //this.Tiles = new tile[64][32];
+
+        
+        worm w1 = new worm(800, 400, this.worm);
+        worm w2 = new worm(600,400,this.worm);
+        
+         
+        this.Lawnmover.Enemies.add(w1);
+        this.Lawnmover.Enemies.add(w2);
+        for (int i =0 ; i &lt;64;i++){
+            for(int j = 4;j&lt;36;j++){
+                if (j==4 || j==35 || i == 0 || i== 63){
+                   cementTile T = new cementTile(20*i,20*j,this.concrete); 
+                   this.Lawnmover.Tiles[i][j-4]  = T;
+                   //this.Lawnmover.DirtTiles = this.Lawnmover.DirtTiles -1;
+               }                              
+            }
+        }        
+                    
+        
+        for (int n =0 ; n &lt;64;n++){
+            for(int m = 4;m&lt;36;m++){
+                if (this.Lawnmover.Tiles[n][m-4] == null){
+                    dirtTile D = new dirtTile(n*20, m*20);
+                    this.Lawnmover.Tiles[n][m-4] = D;
+                }
+               
+            }
+        } 
+        this.Lawnmover.draw(this);
+        this.Lawnmover.presentTile = this.Lawnmover.Tiles[1][1];
+        this.Lawnmover.NextTile = null;      
+    */              
+
+               
+<span class="nc" id="L127">    }</span>
+    
+	
+    /**
+     * Draw all elements in the game by current frame. 
+    */
+    public void draw() {
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        if (this.CheckDead() == true){</span>
+<span class="nc" id="L135">            this.fill(255,255,255);</span>
+<span class="nc" id="L136">            this.rect(-1,-1,WIDTH+2,HEIGHT+2);</span>
+<span class="nc" id="L137">            fill(0, 408, 612); </span>
+<span class="nc" id="L138">            this.fill(139,69,19);</span>
+<span class="nc" id="L139">            textSize(80);</span>
+<span class="nc" id="L140">            text(&quot;All Lives Lost,You Lose&quot;,300,300);</span>
+<span class="nc" id="L141">            return;</span>
+        }
+<span class="nc" id="L143">        this.CheckDead();</span>
+<span class="nc" id="L144">        int b = this.LevelCheck();</span>
+        
+
+<span class="nc" id="L147">        int goal = (int) (this.goal*100);</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        if (b&gt;goal){</span>
+<span class="nc" id="L149">            boolean n = this.LevelChange();</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">            if (n == true){</span>
+<span class="nc" id="L151">                this.fill(255,255,255);</span>
+<span class="nc" id="L152">                this.rect(-1,-1,WIDTH+2,HEIGHT+2);</span>
+<span class="nc" id="L153">                fill(0, 408, 612); </span>
+<span class="nc" id="L154">                this.fill(139,69,19);</span>
+<span class="nc" id="L155">                textSize(80);</span>
+<span class="nc" id="L156">                text(&quot;You win&quot;,500,300);</span>
+<span class="nc" id="L157">                return;</span>
+            }
+        }
+<span class="nc" id="L160">        this.fill(139,69,19);</span>
+<span class="nc" id="L161">        this.rect(-1,-1,WIDTH+2,HEIGHT+2);</span>
+<span class="nc" id="L162">        fill(0, 408, 612); </span>
+<span class="nc" id="L163">        textSize(32);</span>
+<span class="nc" id="L164">        text(&quot;Lives: &quot;+this.Lawnmover.Life,60,60);</span>
+<span class="nc" id="L165">        text(&quot;Progress: &quot;+ b +&quot;%/&quot;+goal+&quot;%&quot;,500,60);</span>
+<span class="nc" id="L166">        text(&quot;Level: &quot;+this.currentLevel, 1000, 60);</span>
+<span class="nc bnc" id="L167" title="All 4 branches missed.">        if (this.Lawnmover.freeze == true || this.Lawnmover.boost == true){</span>
+<span class="nc" id="L168">            int num = 5-(int) Math.round(this.Lawnmover.UseTimer/60);</span>
+<span class="nc" id="L169">            text(&quot;Powerup Time: &quot;+num, 200, 60);</span>
+            
+        }
+ 
+<span class="nc" id="L173">        double L = Math.random();</span>
+<span class="nc" id="L174">        int RandomNumber = (int)(200 + L*400);</span>
+        
+<span class="nc bnc" id="L176" title="All 8 branches missed.">        if (this.Counter&gt;RandomNumber &amp;&amp; this.Lawnmover.AvaiablePowerup == null&amp;&amp;this.Lawnmover.boost == false &amp;&amp; this.Lawnmover.freeze == false){</span>
+<span class="nc" id="L177">            double randonChance = Math.random();</span>
+<span class="nc" id="L178">            this.Counter = 0;</span>
+<span class="nc" id="L179">            int X1 = (int)(25+30*Math.random());</span>
+<span class="nc" id="L180">            int Y1 = (int)(12+15*Math.random());</span>
+<span class="nc" id="L181">            this.Lawnmover.VacantTimer = 0;</span>
+<span class="nc" id="L182">            this.Lawnmover.UseTimer = 0;</span>
+            
+
+<span class="nc bnc" id="L185" title="All 2 branches missed.">            if (randonChance&lt;0.33){</span>
+<span class="nc" id="L186">                freeze F = new freeze(X1*20,Y1*20-4,&quot;freeze&quot;, this.freeze);</span>
+<span class="nc" id="L187">                this.Lawnmover.AvaiablePowerup = F;</span>
+
+<span class="nc" id="L189">            }</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">            else if (randonChance&lt;0.66){</span>
+<span class="nc" id="L191">                heart F = new heart(X1*20, Y1*20-4, &quot;heart&quot;, this.heart);</span>
+<span class="nc" id="L192">                this.Lawnmover.AvaiablePowerup = F;</span>
+                
+<span class="nc" id="L194">            }</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">            else if (randonChance&lt;1.5){</span>
+<span class="nc" id="L196">                boost F = new boost(X1*20, Y1*20-4, &quot;boost&quot;, this.boost);</span>
+<span class="nc" id="L197">                this.Lawnmover.AvaiablePowerup = F;</span>
+                
+            }
+
+        }
+
+<span class="nc bnc" id="L203" title="All 6 branches missed.">         if(this.Lawnmover.freeze == false &amp;&amp; this.Lawnmover.boost ==false&amp;&amp;this.Lawnmover.AvaiablePowerup == null){</span>
+<span class="nc" id="L204">            this.Counter = this.Counter +1;</span>
+        }
+<span class="nc" id="L206">        this.Lawnmover.tick();                     </span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">        for (int i = 0;i&lt;64;i++){</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">            for (int j=0;j&lt;32;j++){</span>
+<span class="nc" id="L209">                this.Lawnmover.Tiles[i][j].draw(this);</span>
+                /*
+                if (this.Lawnmover.Tiles[i][j].type == &quot;green&quot;){
+                    //System.out.println(i );
+                    //System.out.println(j);
+                    //System.out.print(&quot;///////////////////////&quot;);
+                }
+                */
+            }
+        }
+<span class="nc bnc" id="L219" title="All 2 branches missed.">        if (this.Lawnmover.AvaiablePowerup != null){</span>
+<span class="nc" id="L220">            this.Lawnmover.AvaiablePowerup.draw(this);</span>
+<span class="nc" id="L221">            this.Lawnmover.VacantTimer = this.Lawnmover.VacantTimer +1;</span>
+        }
+<span class="nc bnc" id="L223" title="All 2 branches missed.">        for (worm e: this.Lawnmover.Enemies){</span>
+<span class="nc" id="L224">            e.draw(this);</span>
+<span class="nc" id="L225">        }</span>
+<span class="nc" id="L226">        this.Lawnmover.draw(this);</span>
+        //System.out.println(this.Counter);
+        
+        
+
+        
+
+<span class="nc" id="L233">    }</span>
+    public boolean LevelChange(){
+<span class="nc" id="L235">        this.Counter = 0;</span>
+<span class="nc" id="L236">        this.tilesNeed = 0;</span>
+<span class="nc" id="L237">        this.Lawnmover.xDirection = 0;</span>
+<span class="nc" id="L238">        this.Lawnmover.yDirection = 0;</span>
+<span class="nc" id="L239">        this.currentLevel = this.currentLevel +1;</span>
+<span class="nc" id="L240">        this.Lawnmover.Enemies.clear();</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">        if (this.currentLevel&gt; this.levels.size()){</span>
+<span class="nc" id="L242">            return true;</span>
+        }
+<span class="nc" id="L244">        JSONObject LocalLevel = this.levels.getJSONObject(currentLevel-1);</span>
+<span class="nc" id="L245">        JSONArray Enem = (JSONArray)LocalLevel.get(&quot;enemies&quot;);</span>
+<span class="nc" id="L246">        this.goal = (double)(LocalLevel.get(&quot;goal&quot;));</span>
+<span class="nc" id="L247">        String Filename = (String)LocalLevel.get(&quot;outlay&quot;);</span>
+        
+<span class="nc bnc" id="L249" title="All 2 branches missed.">        for (int i = 0;i&lt;Enem.size();i++){</span>
+<span class="nc" id="L250">            int x =(int) Math.round(5+52*Math.random());</span>
+            
+<span class="nc" id="L252">            int y =(int) Math.round(5+25*Math.random());</span>
+            //System.out.println(x + &quot;    &quot;+ y);
+<span class="nc" id="L254">            worm W = new worm(x*20, y*20, this.worm);</span>
+<span class="nc" id="L255">            this.Lawnmover.Enemies.add(W);</span>
+        }
+
+        try{
+            //System.out.println(Filename);
+<span class="nc" id="L260">            File f = new File(Filename); </span>
+<span class="nc" id="L261">            Scanner reader = new Scanner(f);</span>
+<span class="nc" id="L262">            int j = 0;</span>
+<span class="nc bnc" id="L263" title="All 2 branches missed.">            while (reader.hasNextLine()){</span>
+<span class="nc" id="L264">                String data = reader.nextLine();</span>
+<span class="nc" id="L265">                char[] chars = data.toCharArray();</span>
+<span class="nc" id="L266">                int i= 0;</span>
+                //System.out.println(chars);
+<span class="nc bnc" id="L268" title="All 2 branches missed.">                for (char c:chars){</span>
+                    
+<span class="nc bnc" id="L270" title="All 2 branches missed.">                    if (c == 'X'){</span>
+<span class="nc" id="L271">                        cementTile C = new cementTile(i*20, (j+4)*20, this.concrete);</span>
+<span class="nc" id="L272">                        this.Lawnmover.Tiles[i][j] = C;</span>
+<span class="nc" id="L273">                    }</span>
+                    else{
+<span class="nc" id="L275">                        dirtTile D = new dirtTile(i*20, (j+4)*20);</span>
+<span class="nc" id="L276">                        this.Lawnmover.Tiles[i][j] = D;</span>
+<span class="nc" id="L277">                        this.tilesNeed = this.tilesNeed +1;</span>
+                    }
+<span class="nc" id="L279">                    i = i +1;</span>
+
+                }
+<span class="nc" id="L282">                j = j+1;</span>
+                
+                
+
+
+<span class="nc" id="L287">            }</span>
+
+
+
+
+        }
+<span class="nc" id="L293">        catch(FileNotFoundException e){</span>
+            ;
+<span class="nc" id="L295">        }</span>
+
+        //this.Lawnmover.draw(this);
+<span class="nc" id="L298">        this.Lawnmover.x = 20;</span>
+<span class="nc" id="L299">        this.Lawnmover.y = 100;</span>
+<span class="nc" id="L300">        this.Lawnmover.presentTile = this.Lawnmover.Tiles[1][1];</span>
+<span class="nc" id="L301">        this.Lawnmover.NextTile = null;</span>
+<span class="nc" id="L302">        return false;</span>
+
+
+
+
+
+
+
+
+    }
+
+
+    public void keyPressed(){
+
+        
+
+<span class="nc bnc" id="L318" title="All 2 branches missed.">         if (key == CODED)      {</span>
+<span class="nc bnc" id="L319" title="All 4 branches missed.">            if (keyCode == UP &amp;&amp;  this.Lawnmover.yChange ==true ){</span>
+                
+<span class="nc" id="L321">                this.Lawnmover.KeyUp = true;</span>
+<span class="nc" id="L322">                this.Lawnmover.KeyDown = false;</span>
+<span class="nc" id="L323">                this.Lawnmover.KeyRight = false;</span>
+<span class="nc" id="L324">                this.Lawnmover.KeyLeft = false;</span>
+            }
+
+<span class="nc bnc" id="L327" title="All 4 branches missed.">            if (keyCode == DOWN &amp;&amp;  this.Lawnmover.yChange ==true ){</span>
+<span class="nc" id="L328">                this.Lawnmover.KeyUp = false;</span>
+<span class="nc" id="L329">                this.Lawnmover.KeyDown = true;</span>
+<span class="nc" id="L330">                this.Lawnmover.KeyRight = false;</span>
+<span class="nc" id="L331">                this.Lawnmover.KeyLeft = false;                </span>
+
+                
+                
+            }
+            
+<span class="nc bnc" id="L337" title="All 4 branches missed.">            if (keyCode == LEFT &amp;&amp;  this.Lawnmover.xChange ==true ){</span>
+<span class="nc" id="L338">                this.Lawnmover.KeyUp = false; </span>
+<span class="nc" id="L339">                this.Lawnmover.KeyDown = false;</span>
+<span class="nc" id="L340">                this.Lawnmover.KeyRight = false;</span>
+<span class="nc" id="L341">                this.Lawnmover.KeyLeft = true;                </span>
+                             
+                
+            }
+            
+<span class="nc bnc" id="L346" title="All 4 branches missed.">            if (keyCode == RIGHT &amp;&amp;  this.Lawnmover.xChange ==true ){</span>
+<span class="nc" id="L347">                this.Lawnmover.KeyUp = false;</span>
+<span class="nc" id="L348">                this.Lawnmover.KeyDown = false;</span>
+<span class="nc" id="L349">                this.Lawnmover.KeyRight = true;</span>
+<span class="nc" id="L350">                this.Lawnmover.KeyLeft = false;   </span>
+                
+                                               
+                
+            }            
+
+        }
+        
+<span class="nc" id="L358">    }</span>
+    public  boolean CheckDead(){
+<span class="nc bnc" id="L360" title="All 2 branches missed.">        if (this.Lawnmover.Life&lt;1){</span>
+<span class="nc" id="L361">            return true;</span>
+            //System.exit(1);
+        }
+<span class="nc" id="L364">        return false;</span>
+
+    }
+
+    public int LevelCheck(){
+<span class="nc" id="L369">        int Moment  =0 ;</span>
+<span class="nc bnc" id="L370" title="All 2 branches missed.">        for (int i = 0;i&lt;64;i++){</span>
+<span class="nc bnc" id="L371" title="All 2 branches missed.">            for(int j = 0;j&lt;32;j++){</span>
+<span class="nc bnc" id="L372" title="All 2 branches missed.">                if (this.Lawnmover.Tiles[i][j].type == &quot;grass&quot;){</span>
+<span class="nc" id="L373">                    Moment = Moment +1;</span>
+                }
+            }
+        }
+<span class="nc" id="L377">        int percentage = (int) Math.round(Moment*100/this.tilesNeed);</span>
+        //System.out.println(percentage);
+<span class="nc bnc" id="L379" title="All 2 branches missed.">        if (percentage &gt; this.goal*100){</span>
+            //this.LevelChange();
+<span class="nc" id="L381">            return percentage;</span>
+        }
+        else{
+<span class="nc" id="L384">            return percentage;</span>
+        }
+    }
+
+
+
+
+    public static void main(String[] args) {
+<span class="nc" id="L392">        PApplet.main(&quot;lawnlayer.App&quot;);</span>
+<span class="nc" id="L393">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

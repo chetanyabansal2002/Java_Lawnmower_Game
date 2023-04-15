@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>worm.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">LawnMover</a> &gt; <a href="index.source.html" class="el_package">lawnlayer</a> &gt; <span class="el_source">worm.java</span></div><h1>worm.java</h1><pre class="source lang-java linenums">package lawnlayer;
+
+import javafx.scene.input.KeyCode;
+import processing.core.PApplet;
+import java.util.ArrayList;
+import java.lang.Math;
+
+import processing.core.PImage;
+
+public class worm extends enemies {
+    public int x;
+    public int y;
+    public PImage sprite;
+    public int xDirection;
+    public int yDirection;
+    public int speed;
+    public int xTile;
+    public int yTile;
+
+
+<span class="nc" id="L21">    public worm(int x,int y, PImage sprite){</span>
+<span class="nc" id="L22">        this.x =x;</span>
+<span class="nc" id="L23">        this.y = y;</span>
+<span class="nc" id="L24">        this.sprite = sprite;</span>
+<span class="nc" id="L25">        this.xTile = x/20;</span>
+<span class="nc" id="L26">        this.yTile = y/20 -4 ;</span>
+<span class="nc" id="L27">        this.xDirection = 1;</span>
+<span class="nc" id="L28">        this.yDirection = 1;</span>
+<span class="nc" id="L29">    }</span>
+
+  
+    
+    public void draw(PApplet app){
+<span class="nc" id="L34">      app.image(this.sprite, this.x, this.y);</span>
+      //app.fill(255, 0, 0);
+      //app.rect(this.x,this.y,20,20);
+<span class="nc" id="L37">    }</span>
+ 
+    /*
+    public void collide(){
+      if (this.x%20 == 0 &amp;&amp; this.y%20 == 0){
+      //Check if if collides with top
+       if (this.xDirection ==1 &amp;&amp; this.Tiles[x+1][y].safe = &quot;True&quot;  ){
+         this.xDirection = -1;
+         
+       }
+
+
+      //Check if it collides with bottom
+      if (this.xDirection ==-1 &amp;&amp; this.Tiles[x-1][y].safe = &quot;True&quot;  ){
+        this.xDirection = 1;
+        
+      }       
+
+      //Check if it collides with left 
+      if (this.xDirection ==-1 &amp;&amp; this.Tiles[x][y-1].safe = &quot;True&quot;  ){
+        this.yDirection = 1;
+        
+      }      
+      // Check if collides with right
+      if (this.xDirection ==1 &amp;&amp; this.Tiles[x][y+1].safe = &quot;True&quot;  ){
+        this.yDirection = -1;
+        
+      }      
+      }
+      
+
+    }
+    */
+  
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

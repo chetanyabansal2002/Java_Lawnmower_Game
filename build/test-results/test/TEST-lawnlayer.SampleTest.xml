@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="lawnlayer.SampleTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-05-08T10:49:47" hostname="DESKTOP-BQDQUPK" time="0.041">
+  <properties/>
+  <testcase name="simpleTest()" classname="lawnlayer.SampleTest" time="0.041"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
